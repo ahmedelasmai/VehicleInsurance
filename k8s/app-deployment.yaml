@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle-app
+  template:
+    metadata:
+      labels:
+        app: vehicle-app
+    spec:
+      containers:
+        - name: vehicle-app
+          image: vehicle-insurance-app
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          env:
+                    
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/vehicledb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              value: org.postgresql.Driver
+            - name: SPRING_JPA_DATABASE_PLATFORM
+              value: org.hibernate.dialect.PostgreSQLDialect
+

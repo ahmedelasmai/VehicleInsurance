@@ -13,34 +13,39 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build & Package') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh '''
+                docker run --rm \
+                -v $PWD:/app \
+                -w /app \
+                maven:3.9-eclipse-temurin-17 \
+                mvn clean package -DskipTests
+                '''
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh '''
+                docker run --rm \
+                -v $PWD:/app \
+                -w /app \
+                maven:3.9-eclipse-temurin-17 \
+                mvn test
+                '''
             }
         }
 
-        
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app maven:3.9-eclipse-temurin-17 mvn clean package -DskipTests'
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
-
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f postgres-pvc.yaml'
-                sh 'kubectl apply -f postgres-deployment.yaml'
-                sh 'kubectl apply -f postgres-service.yaml'
-
-                sh 'kubectl apply -f app-deployment.yaml'
-                sh 'kubectl apply -f app-service.yaml'
+                sh 'kubectl apply -f k8s/'
             }
         }
     }

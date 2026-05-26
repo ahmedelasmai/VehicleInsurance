@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "vehicle-insurance-app"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/ahmedelasmai/VehicleInsurance.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        
+        stage('Build') {
+            steps {
+                sh 'docker run --rm -v $PWD:/app -w /app maven:3.9-eclipse-temurin-17 mvn clean package -DskipTests'
+            }
+        }
+
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f postgres-pvc.yaml'
+                sh 'kubectl apply -f postgres-deployment.yaml'
+                sh 'kubectl apply -f postgres-service.yaml'
+
+                sh 'kubectl apply -f app-deployment.yaml'
+                sh 'kubectl apply -f app-service.yaml'
+            }
+        }
+    }
+}

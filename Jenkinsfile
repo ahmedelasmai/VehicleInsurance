@@ -13,26 +13,14 @@ pipeline {
             }
         }
 
-        stage('Build & Package') {
+        stage('Build & Test') {
             steps {
                 sh '''
                 docker run --rm \
                 -v $PWD:/app \
                 -w /app \
                 maven:3.9-eclipse-temurin-17 \
-                mvn clean package -DskipTests
-                '''
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                docker run --rm \
-                -v $PWD:/app \
-                -w /app \
-                maven:3.9-eclipse-temurin-17 \
-                mvn test
+                mvn clean verify
                 '''
             }
         }

@@ -2,7 +2,6 @@ package com.home.vehicleinsurance.controller;
 
 import com.home.vehicleinsurance.entity.Movement;
 import com.home.vehicleinsurance.service.MovementService;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class MovementController {
     }
 
     @PostMapping
-    public Movement createMovement(@Valid @RequestBody Movement movement) {
+    public Movement createMovement(@RequestBody Movement movement) {
         return movementService.createMovement(movement);
     }
 

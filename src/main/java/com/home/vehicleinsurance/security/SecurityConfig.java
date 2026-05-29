@@ -37,16 +37,16 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
 
-                .requestMatchers(POST, "/api/vehicles").hasRole("ADMIN")
-                .requestMatchers(PUT, "/api/vehicles/**").hasRole("ADMIN")
-                .requestMatchers(DELETE, "/api/vehicles/**").hasRole("ADMIN")
-                .requestMatchers(POST, "/api/compliance/run").hasRole("ADMIN")
+                .requestMatchers(POST, "/api/vehicles").hasRole("ROLE_ADMIN")
+                .requestMatchers(PUT, "/api/vehicles/**").hasRole("ROLE_ADMIN")
+                .requestMatchers(DELETE, "/api/vehicles/**").hasRole("ROLE_ADMIN")
+                .requestMatchers(POST, "/api/compliance/run").hasRole("ROLE_ADMIN")
 
-                .requestMatchers(GET, "/api/vehicles/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/policies/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/movements/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(GET, "/api/compliance/violations").hasAnyRole("USER", "ADMIN")
-                .requestMatchers("/api/reports/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers(GET, "/api/vehicles/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .requestMatchers("/api/policies/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .requestMatchers("/api/movements/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .requestMatchers(GET, "/api/compliance/violations").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .requestMatchers("/api/reports/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
 
                 .anyRequest().authenticated()
 

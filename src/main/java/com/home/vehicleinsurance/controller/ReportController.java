@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,16 +26,18 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/download")
-    public ResponseEntity<byte []> downloadCsv() {
+    @GetMapping("/download/{date}")
+    public ResponseEntity<byte []> downloadCsv(@PathVariable String date) {
         List<Vehicle> vehicles = tempVehicleDataService.getVehicles();
 
         byte[] csv = reportService.generateCsv(vehicles);
 
+//        2026-06-01, this format for date
+        String filename = "report-" + date + ".csv";
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=report-" + LocalDate.now() + ".csv")
+                        "attachment; filename=\"" + filename + "\"")
                 .contentType(MediaType.parseMediaType("text/csv"))
                 .body(csv);
     }

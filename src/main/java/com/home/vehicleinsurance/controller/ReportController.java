@@ -3,7 +3,8 @@ package com.home.vehicleinsurance.controller;
 
 import com.home.vehicleinsurance.entity.Vehicle;
 import com.home.vehicleinsurance.service.ReportService;
-import com.home.vehicleinsurance.service.TempVehicleDataService;
+
+import com.home.vehicleinsurance.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,14 +22,14 @@ import java.util.List;
 public class ReportController {
 
     @Autowired
-    private TempVehicleDataService tempVehicleDataService;
+    private VehicleService vehicleService;
 
     @Autowired
     private ReportService reportService;
 
     @GetMapping("/download/{date}")
     public ResponseEntity<byte []> downloadCsv(@PathVariable String date) {
-        List<Vehicle> vehicles = tempVehicleDataService.getVehicles();
+        List<Vehicle> vehicles = vehicleService.getAllVehicles();
 
         byte[] csv = reportService.generateCsv(vehicles);
 

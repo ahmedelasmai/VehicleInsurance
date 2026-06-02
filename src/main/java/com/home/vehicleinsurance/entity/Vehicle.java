@@ -41,6 +41,12 @@ public class Vehicle {
     public Long getId() {
         return id;
     }
+    public Long SetId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getRegistrationNumber() {
         return registrationNumber;
@@ -73,4 +79,6 @@ public class Vehicle {
     public void setMovements(List<Movement> movements) {
         this.movements = movements;
     }
+
+
 }

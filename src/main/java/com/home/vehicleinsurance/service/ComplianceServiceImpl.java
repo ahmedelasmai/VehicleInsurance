@@ -5,6 +5,8 @@ import com.home.vehicleinsurance.entity.ComplianceViolation;
 import com.home.vehicleinsurance.entity.ViolationType;
 import com.home.vehicleinsurance.repository.ComplianceViolationRepository;
 import com.home.vehicleinsurance.repository.InsurancePolicyRepository;
+import com.home.vehicleinsurance.repository.MovementRepository;
+import com.home.vehicleinsurance.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ public class ComplianceServiceImpl implements ComplianceService {
     private final VehicleRepository vehicleRepository;
     private final InsurancePolicyRepository policyRepository;
     private final ComplianceViolationRepository violationRepository;
-    private final MovementRespository movementRepository;
+    private final MovementRepository movementRepository;
     private final ViolationNotifier violationNotifier;
 
     @Override

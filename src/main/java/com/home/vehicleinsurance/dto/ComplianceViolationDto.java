@@ -15,5 +15,6 @@ public class ComplianceViolationDto {
     private String detail;
     private String registrationNumber;
 
+
 }
 

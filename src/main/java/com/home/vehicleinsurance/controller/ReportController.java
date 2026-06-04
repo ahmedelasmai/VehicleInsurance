@@ -31,6 +31,12 @@ public class ReportController {
         return ResponseEntity.ok("Uploaded to S3");
     }
 
+//    use cron job to make it upload monthly
+    @PostMapping("/monthly")
+    public void generateMonthly() {
+        reportService.generateAndUploadMonthly();
+    }
+
 
     @GetMapping("download/{date}")
     public ResponseEntity<byte[]> downloadReport(@PathVariable String date) {

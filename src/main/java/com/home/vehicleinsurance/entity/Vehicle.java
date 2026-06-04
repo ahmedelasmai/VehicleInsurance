@@ -2,6 +2,7 @@ package com.home.vehicleinsurance.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +27,15 @@ public class Vehicle {
     @Column(nullable = false)
     private String vehicleType;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
     private List<Movement> movements = new ArrayList<>();
 
-    public Vehicle() {
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+    private List<Policy> policies = new ArrayList<>();
+
+    public Vehicle() {}
 
     public Vehicle(String registrationNumber, String ownerName, String vehicleType) {
         this.registrationNumber = registrationNumber;
@@ -41,9 +46,7 @@ public class Vehicle {
     public Long getId() {
         return id;
     }
-    public Long SetId() {
-        return id;
-    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -80,5 +83,11 @@ public class Vehicle {
         this.movements = movements;
     }
 
+    public List<Policy> getPolicies() {
+        return policies;
+    }
 
+    public void setPolicies(List<Policy> policies) {
+        this.policies = policies;
+    }
 }

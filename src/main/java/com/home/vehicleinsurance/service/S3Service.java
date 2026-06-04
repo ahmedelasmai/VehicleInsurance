@@ -8,6 +8,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.core.sync.RequestBody;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 @Service
 public class S3Service {
@@ -18,6 +19,19 @@ public class S3Service {
 
     public S3Service(S3Client s3Client) {
         this.s3Client = s3Client;
+    }
+
+    public void uploadMonthlyReport(byte[] csv, YearMonth month) {
+
+        String key = "reports/monthly/report-" + month + ".csv";
+
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType("text/csv")
+                .build();
+
+        s3Client.putObject(request, RequestBody.fromBytes(csv));
     }
 
     public void uploadReport(byte[] csv, LocalDate date) {

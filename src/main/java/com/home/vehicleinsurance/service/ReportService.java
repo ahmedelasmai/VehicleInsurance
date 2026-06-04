@@ -1,15 +1,15 @@
 package com.home.vehicleinsurance.service;
 
+import com.home.vehicleinsurance.entity.Movement;
 import com.home.vehicleinsurance.entity.Vehicle;
+import com.home.vehicleinsurance.repository.MovementRepository;
 import com.home.vehicleinsurance.repository.VehicleRepository;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -17,11 +17,13 @@ public class ReportService {
 
     private final S3Service s3Service;
     private final VehicleRepository vehicleRepository;
+    private final MovementRepository movementRepository;
 
     public ReportService(S3Service s3Service,
-                         VehicleRepository vehicleRepository) {
+                         VehicleRepository vehicleRepository, MovementRepository movementRepository) {
         this.s3Service = s3Service;
         this.vehicleRepository = vehicleRepository;
+        this.movementRepository = movementRepository;
     }
 
 
@@ -52,5 +54,45 @@ public class ReportService {
         }
 
         return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    
+
+    private byte[] convertToCsv(List<Movement> movements) {
+
+        StringBuilder sb = new StringBuilder();
+
+
+        sb.append("id,vehicleId,movementType,movementTime\n");
+
+
+        for (Movement m : movements) {
+            sb.append(m.getId()).append(",");
+            sb.append(m.getVehicle() != null ? m.getVehicle().getId() : "").append(",");
+            sb.append(m.getMovementType()).append(",");
+            sb.append(m.getMovementTime()).append("\n");
+        }
+
+        return sb.toString().getBytes();
+    }
+
+    public byte[] generateMonthlyCsv(YearMonth month) {
+
+        LocalDateTime start = month.atDay(1).atStartOfDay();
+        LocalDateTime end = month.atEndOfMonth().atTime(23, 59, 59);
+
+        List<Movement> data = movementRepository
+                .findByMovementTimeBetween(start, end);
+
+        return convertToCsv(data);
+    }
+
+    public void generateAndUploadMonthly() {
+
+        YearMonth lastMonth = YearMonth.now().minusMonths(1);
+
+        byte[] csv = generateMonthlyCsv(lastMonth);
+
+        s3Service.uploadMonthlyReport(csv, lastMonth);
     }
 }

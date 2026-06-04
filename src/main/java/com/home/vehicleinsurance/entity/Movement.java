@@ -1,42 +1,12 @@
 package com.home.vehicleinsurance.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movements")
 public class Movement {
-    public Long getId() {
-        return id;
-    }
-
-    public MovementType getMovementType() {
-        return movementType;
-    }
-
-    public void setMovementType(MovementType movementType) {
-        this.movementType = movementType;
-    }
-
-    public Vehicle getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(Vehicle vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public LocalDateTime getMovementTime() {
-        return movementTime;
-    }
-
-    public void setMovementTime(LocalDateTime movementTime) {
-        this.movementTime = movementTime;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,12 +19,12 @@ public class Movement {
     @Column(nullable = false)
     private LocalDateTime movementTime;
 
-    @ManyToOne
-    @JoinColumn(name = "vehicle_id")
+    @JsonIgnore
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
-    public Movement() {
-    }
+    public Movement() {}
 
     public Movement(MovementType movementType, LocalDateTime movementTime, Vehicle vehicle) {
         this.movementType = movementType;
@@ -62,4 +32,36 @@ public class Movement {
         this.vehicle = vehicle;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public MovementType getMovementType() {
+        return movementType;
+    }
+
+    public void setMovementType(MovementType movementType) {
+        this.movementType = movementType;
+    }
+
+    public LocalDateTime getMovementTime() {
+        return movementTime;
+    }
+
+    public void setMovementTime(LocalDateTime movementTime) {
+        this.movementTime = movementTime;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
+    // Corrected logic
+    public boolean isAfter(LocalDateTime expiryEndOfDay) {
+        return this.movementTime.isAfter(expiryEndOfDay);
+    }
 }

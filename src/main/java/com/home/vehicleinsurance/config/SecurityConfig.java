@@ -2,29 +2,29 @@ package com.home.vehicleinsurance.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableMethodSecurity
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        // Allow health checks or public endpoints here if needed
-                        .requestMatchers("/api/public/**").permitAll()
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) {
 
-                        // Everything else requires authentication
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(basic -> {})   // Enables basic auth
-                .formLogin(form -> {})    // Enables form login
-                .logout(logout -> {});    // Enables logout
+        http.csrf(csrf -> csrf.disable());
+
+        http.authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()
+        );
 
         return http.build();
     }

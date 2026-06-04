@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,20 +24,26 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("/download/{date}")
-    public ResponseEntity<byte []> downloadCsv(@PathVariable String date) {
-        List<Vehicle> vehicles = vehicleService.getAllVehicles();
 
-        byte[] csv = reportService.generateCsv(vehicles);
+    @PostMapping("generate")
+    public ResponseEntity<String> generateReport() {
+        reportService.generateAndUploadReport();
+        return ResponseEntity.ok("Uploaded to S3");
+    }
 
-//        2026-06-01, this format for date
-        String filename = "report-" + date + ".csv";
+
+    @GetMapping("download/{date}")
+    public ResponseEntity<byte[]> downloadReport(@PathVariable String date) {
+
+        LocalDate parsedDate = LocalDate.parse(date);
+
+        byte[] file = reportService.downloadReport(parsedDate);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + filename + "\"")
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .body(csv);
+                .header("Content-Disposition",
+                        "attachment; filename=report-" + date + ".csv")
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(file);
     }
 
 
